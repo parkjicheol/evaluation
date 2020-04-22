@@ -3,6 +3,7 @@ package com.bgfnc.web.evaluation.model;
 import com.bgfnc.web.evaluation.repository.MemberRepository;
 import com.bgfnc.web.evaluation.service.MemberService;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="question")
+@DynamicUpdate
 public class Question extends AuditModel {
 
     @Id

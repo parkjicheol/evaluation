@@ -40,48 +40,46 @@ public class AnswerController extends AbstractBaseController<AnswerController> {
     }
 
     // 질문 번호로 조회
-    @GetMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Answer> getAnswer(@PathVariable("seq") Integer seq) {
-        Optional<Answer> answer = answerService.findById(seq);
+    @GetMapping(value = "/{answerSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Answer> getAnswer(@PathVariable("answerSeq") Integer answerSeq) {
+        Optional<Answer> answer = answerService.findById(answerSeq);
         return new ResponseEntity<Answer>(answer.get(), HttpStatus.OK);
     }
 
     // 질문 번호로 삭제
-    @DeleteMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteAnswer(@PathVariable("seq") Integer seq) {
+    @DeleteMapping(value = "/{answerSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAnswer(@PathVariable("answerSeq") Integer answerSeq) {
 
-        if (!answerService.existsById(seq)) {
-            throw new ResourceNotFoundException("Answer not found with id " + seq);
+        if (!answerService.existsById(answerSeq)) {
+            throw new ResourceNotFoundException("Answer not found with id " + answerSeq);
         }
 
-        answerService.deleteById(seq);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return answerService.deleteById(answerSeq);
     }
 
     // 질문 번호로 수정
-    @PutMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Answer> updateAnswer(@PathVariable("seq") Integer seq, Answer answer) {
+    @PatchMapping
+    public ResponseEntity<Answer> updateAnswer(Integer answerSeq, Answer answerRequest) {
 
-        if (!answerService.existsById(seq)) {
-            throw new ResourceNotFoundException("Answer not found with id " + seq);
+        if (!answerService.existsById(answerSeq)) {
+            throw new ResourceNotFoundException("Answer not found with id " + answerSeq);
         }
 
-        answerService.updateById(seq, answer);
-        return new ResponseEntity<Answer>(answer, HttpStatus.OK);
+        return new ResponseEntity<Answer>(answerService.updateByAnswer(answerSeq, answerRequest), HttpStatus.OK);
     }
 
     // 질문 입력
     @PostMapping
-    public ResponseEntity<Answer> save(Answer answer) {
-        answer.setMember(new Member(2));
-        answer.setRegisterDate(Calendar.getInstance());
-        return new ResponseEntity<Answer>(answerService.save(answer), HttpStatus.OK);
+    public ResponseEntity<Answer> save(Integer questionSeq, Answer answerRequest) {
+        answerRequest.setMember(new Member(2));
+        answerRequest.setRegisterDate(Calendar.getInstance());
+        return new ResponseEntity<Answer>(answerService.save(questionSeq, answerRequest), HttpStatus.OK);
     }
 
     // 질문 입력
     @GetMapping(value = "/saveAnswer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Answer> save(HttpServletRequest req, Answer answer) {
-        return new ResponseEntity<Answer>(answerService.save(answer), HttpStatus.OK);
+    public ResponseEntity<Answer> save(Integer questionSeq, HttpServletRequest request, Answer answerRequest) {
+        return new ResponseEntity<Answer>(answerService.save(questionSeq, answerRequest), HttpStatus.OK);
     }
 
 }

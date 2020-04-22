@@ -1,21 +1,27 @@
 package com.bgfnc.web.evaluation.service;
 
+import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
 import com.bgfnc.web.evaluation.model.Answer;
 import com.bgfnc.web.evaluation.repository.AnswerRepository;
+import com.bgfnc.web.evaluation.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AnswerService {
 
+    private QuestionRepository questionRepository;
     private AnswerRepository answerRepository;
 
     @Autowired
-    public AnswerService(AnswerRepository answerRepository) {
+    public AnswerService(QuestionRepository questionRepository, AnswerRepository answerRepository) {
+        this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
     }
 
@@ -27,25 +33,28 @@ public class AnswerService {
         return answerRepository.findById(seq);
     }
 
-    public void deleteById(Integer seq) {
-        answerRepository.deleteById(seq);
+    public ResponseEntity<?> deleteById(Integer answerSeq) {
+        return answerRepository.findById(answerSeq)
+                .map(answer -> {
+                    answerRepository.delete(answer);
+                    return ResponseEntity.ok().build();
+                }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerSeq));
     }
 
-    public Answer save(Answer answer) {
-        answerRepository.save(answer);
-        return answer;
+    public Answer save(Integer questionSeq, Answer answerRequest) {
+        return questionRepository.findById(questionSeq)
+                .map(question -> {
+                    answerRequest.setQuestion(question);
+                    return answerRepository.save(answerRequest);
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
     }
 
-    public void updateById(Integer seq, Answer answer) {
-        Optional<Answer> optionalAnswer = answerRepository.findById(seq);
-
-        if (optionalAnswer.isPresent()) {
-            optionalAnswer.get().setSeq(answer.getSeq());
-            optionalAnswer.get().setDescription(answer.getDescription());
-            optionalAnswer.get().setRegisterDate(answer.getRegisterDate());
-            optionalAnswer.get().setUpdateDate(answer.getUpdateDate());
-            answerRepository.save(answer);
-        }
+    public Answer updateByAnswer(Integer answerSeq, Answer answerRequest) {
+        return answerRepository.findById(answerSeq)
+                .map(answer -> {
+                    answer.setDescription(answerRequest.getDescription());
+                    return answerRepository.save(answer);
+                }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerSeq));
     }
 
     public Boolean existsById(Integer seq) {

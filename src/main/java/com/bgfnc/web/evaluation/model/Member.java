@@ -1,6 +1,7 @@
 package com.bgfnc.web.evaluation.model;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name="member")
+@DynamicUpdate
 public class Member extends AuditModel {
 
     @Id

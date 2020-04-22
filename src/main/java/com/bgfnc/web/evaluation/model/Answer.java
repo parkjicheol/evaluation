@@ -2,6 +2,7 @@ package com.bgfnc.web.evaluation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Optional;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -16,6 +18,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="answer")
+@DynamicUpdate
 public class Answer extends AuditModel {
 
     @Id
@@ -32,7 +35,7 @@ public class Answer extends AuditModel {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "question_seq", referencedColumnName="seq", nullable = false)
+    @JoinColumn(name = "question_seq", referencedColumnName = "seq",  nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Question question;
