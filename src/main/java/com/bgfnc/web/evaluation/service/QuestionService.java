@@ -1,9 +1,11 @@
 package com.bgfnc.web.evaluation.service;
 
+import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
 import com.bgfnc.web.evaluation.model.Member;
 import com.bgfnc.web.evaluation.model.Question;
 import com.bgfnc.web.evaluation.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,8 +30,12 @@ public class QuestionService {
         return questionRepository.findById(seq);
     }
 
-    public void deleteById(Integer seq) {
-        questionRepository.deleteById(seq);
+    public ResponseEntity<?> deleteById(Integer questionSeq) {
+        return questionRepository.findById(questionSeq)
+                .map(question -> {
+                    questionRepository.delete(question);
+                    return ResponseEntity.ok().build();
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
     }
 
     public Question save(Question question) {
@@ -37,17 +43,13 @@ public class QuestionService {
         return question;
     }
 
-    public void updateById(Integer seq, Question question) {
-        Optional<Question> optionalQuestion = questionRepository.findById(seq);
-
-        if (optionalQuestion.isPresent()) {
-            optionalQuestion.get().setSeq(question.getSeq());
-            optionalQuestion.get().setTitle(question.getTitle());
-            optionalQuestion.get().setDescription(question.getDescription());
-            optionalQuestion.get().setRegisterDate(question.getRegisterDate());
-            optionalQuestion.get().setUpdateDate(question.getUpdateDate());
-            questionRepository.save(question);
-        }
+    public Question updateById(Integer questionSeq, Question questionRequest) {
+        return questionRepository.findById(questionSeq)
+                .map(question -> {
+                    question.setTitle(questionRequest.getTitle());
+                    question.setDescription(questionRequest.getDescription());
+                    return questionRepository.save(question);
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
     }
 
     public Boolean existsById(Integer seq) {

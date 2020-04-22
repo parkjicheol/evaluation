@@ -48,26 +48,24 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
 
     // 질문 번호로 삭제
     @DeleteMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteQuestion(@PathVariable("seq") Integer seq) {
+    public ResponseEntity<?> deleteQuestion(@PathVariable("seq") Integer questionSeq) {
 
-        if (!questionService.existsById(seq)) {
-            throw new ResourceNotFoundException("Question not found with id " + seq);
+        if (!questionService.existsById(questionSeq)) {
+            throw new ResourceNotFoundException("Question not found with id " + questionSeq);
         }
 
-        questionService.deleteById(seq);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return questionService.deleteById(questionSeq);
     }
 
     // 질문 번호로 수정
-    @PutMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Question> updateQuestion(@PathVariable("seq") Integer seq, Question question) {
+    @PutMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Question> updateQuestion(@PathVariable("questionSeq") Integer questionSeq, Question question) {
 
-        if (!questionService.existsById(seq)) {
-            throw new ResourceNotFoundException("Question not found with id " + seq);
+        if (!questionService.existsById(questionSeq)) {
+            throw new ResourceNotFoundException("Question not found with id " + questionSeq);
         }
 
-        questionService.updateById(seq, question);
-        return new ResponseEntity<Question>(question, HttpStatus.OK);
+        return new ResponseEntity<Question>(questionService.updateById(questionSeq, question), HttpStatus.OK);
     }
 
     // 질문 입력
