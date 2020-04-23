@@ -1,6 +1,7 @@
 package com.bgfnc.web.evaluation.controller;
 
 import com.bgfnc.web.evaluation.common.abs.AbstractBaseController;
+import com.bgfnc.web.evaluation.common.util.EncoderUtil;
 import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
 import com.bgfnc.web.evaluation.model.Member;
 import com.bgfnc.web.evaluation.service.MemberService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -38,46 +40,46 @@ public class MemberController extends AbstractBaseController<MemberController> {
     }
 
     // 회원 번호로 조회
-    @GetMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> getMember(@PathVariable("seq") Integer seq) {
-        Optional<Member> member = memberService.findById(seq);
+    @GetMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Member> getMember(@PathVariable("memberSeq") Integer memberSeq) {
+        Optional<Member> member = memberService.findById(memberSeq);
+
+        if (!member.isPresent()) {
+            throw new ResourceNotFoundException("Member not found with id " + memberSeq);
+        }
+
         return new ResponseEntity<Member>(member.get(), HttpStatus.OK);
     }
 
     // 회원 번호로 삭제
-    @DeleteMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteMember(@PathVariable("seq") Integer seq) {
+    @DeleteMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteMember(@PathVariable("memberSeq") Integer memberSeq) {
 
-        if (!memberService.existsById(seq)) {
-            throw new ResourceNotFoundException("Question not found with id " + seq);
+        if (!memberService.existsById(memberSeq)) {
+            throw new ResourceNotFoundException("Member not found with id " + memberSeq);
         }
 
-        memberService.deleteById(seq);
+        memberService.deleteById(memberSeq);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     // 회원 번호로 수정
-    @PutMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> updateMember(@PathVariable("seq") Integer seq, Member member) {
+    @PatchMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Member> updateMember(@PathVariable("memberSeq") Integer memberSeq, Member member) {
 
-        if (!memberService.existsById(seq)) {
-            throw new ResourceNotFoundException("Question not found with id " + seq);
+        if (!memberService.existsById(memberSeq)) {
+            throw new ResourceNotFoundException("Member not found with id " + memberSeq);
         }
 
-        memberService.updateById(seq, member);
+        memberService.updateById(memberSeq, member);
         return new ResponseEntity<Member>(member, HttpStatus.OK);
     }
 
     // 회원 입력
-    @PostMapping
-    public ResponseEntity<Member> save(Member member) {
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Member> save(Member member) throws NoSuchAlgorithmException {
         member.setRegisterDate(Calendar.getInstance());
-        return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);
-    }
-
-    // 회원 입력
-    @GetMapping(value = "/saveMember", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> save(HttpServletRequest req, Member member) {
+        member.setPassword(EncoderUtil.encodeSha256(member.getPassword()));
         return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);
     }
 

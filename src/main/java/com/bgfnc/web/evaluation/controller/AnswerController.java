@@ -43,6 +43,11 @@ public class AnswerController extends AbstractBaseController<AnswerController> {
     @GetMapping(value = "/{answerSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Answer> getAnswer(@PathVariable("answerSeq") Integer answerSeq) {
         Optional<Answer> answer = answerService.findById(answerSeq);
+
+        if (!answer.isPresent()) {
+            throw new ResourceNotFoundException("Answer not found with id " + answerSeq);
+        }
+
         return new ResponseEntity<Answer>(answer.get(), HttpStatus.OK);
     }
 

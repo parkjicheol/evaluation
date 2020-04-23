@@ -40,15 +40,20 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
     }
 
     // 질문 번호로 조회
-    @GetMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Question> getQuestion(@PathVariable("seq") Integer seq) {
-        Optional<Question> question = questionService.findById(seq);
+    @GetMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Question> getQuestion(@PathVariable("questionSeq") Integer questionSeq) {
+        Optional<Question> question = questionService.findById(questionSeq);
+
+        if (!question.isPresent()) {
+            throw new ResourceNotFoundException("Question not found with id " + questionSeq);
+        }
+
         return new ResponseEntity<Question>(question.get(), HttpStatus.OK);
     }
 
     // 질문 번호로 삭제
-    @DeleteMapping(value = "/{seq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteQuestion(@PathVariable("seq") Integer questionSeq) {
+    @DeleteMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteQuestion(@PathVariable("questionSeq") Integer questionSeq) {
 
         if (!questionService.existsById(questionSeq)) {
             throw new ResourceNotFoundException("Question not found with id " + questionSeq);
@@ -58,7 +63,7 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
     }
 
     // 질문 번호로 수정
-    @PutMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Question> updateQuestion(@PathVariable("questionSeq") Integer questionSeq, Question question) {
 
         if (!questionService.existsById(questionSeq)) {
