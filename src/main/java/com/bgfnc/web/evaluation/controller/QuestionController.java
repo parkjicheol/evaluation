@@ -60,7 +60,7 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
     // 질문 번호로 수정
     @PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Question> updateQuestion(Question questionRequest) {
-        questionRequest.setMember(new Member(2));
+        questionRequest.setMember(new Member((long) 2));
         questionRequest.setUpdateDate(Calendar.getInstance());
         return new ResponseEntity<Question>(questionService.updateById(questionRequest), HttpStatus.OK);
     }
@@ -68,7 +68,7 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
     // 질문 입력
     @PostMapping
     public ResponseEntity<Question> saveQuestion(Question questionRequest) {
-        questionRequest.setMember(new Member(2));
+        questionRequest.setMember(new Member((long) 2));
         questionRequest.setRegisterDate(Calendar.getInstance());
         return new ResponseEntity<Question>(questionService.save(questionRequest), HttpStatus.OK);
     }

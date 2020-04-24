@@ -1,9 +1,12 @@
 package com.bgfnc.web.evaluation.config.security;
 
+import com.bgfnc.web.evaluation.common.util.EncoderUtil;
 import com.bgfnc.web.evaluation.service.UserService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -35,6 +38,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
+    @SneakyThrows
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String id = authentication.getPrincipal().toString();
@@ -53,6 +57,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
         roles.add(new SimpleGrantedAuthority("ADMIN"));
+
+        password = EncoderUtil.encodeSha256(password);
+
+        if (!password.equals(userDetails.getPassword())) {
+            throw new BadCredentialsException("로그인 정보가 일치하지 않습니다.");
+        }
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(id, password, roles);
         token.setDetails(userDetails);

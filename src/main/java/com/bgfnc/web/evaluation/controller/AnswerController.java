@@ -61,7 +61,7 @@ public class AnswerController extends AbstractBaseController<AnswerController> {
     // 질문 번호로 수정
     @PatchMapping
     public ResponseEntity<Answer> updateAnswer(Answer answerRequest) {
-        answerRequest.setMember(new Member(2));
+        answerRequest.setMember(new Member((long) 2));
         answerRequest.setUpdateDate(Calendar.getInstance());
         return new ResponseEntity<Answer>(answerService.updateByAnswer(answerRequest), HttpStatus.OK);
     }
@@ -69,7 +69,7 @@ public class AnswerController extends AbstractBaseController<AnswerController> {
     // 질문 입력
     @PostMapping
     public ResponseEntity<Answer> saveAnswer(Integer questionSeq, Answer answerRequest) {
-        answerRequest.setMember(new Member(2));
+        answerRequest.setMember(new Member((long) 2));
         answerRequest.setRegisterDate(Calendar.getInstance());
         return new ResponseEntity<Answer>(answerService.save(questionSeq, answerRequest), HttpStatus.OK);
     }

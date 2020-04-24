@@ -5,6 +5,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -18,10 +19,10 @@ public class Member extends AuditModel {
     @Id
     @Column(name = "seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer seq;
+    private Long seq;
 
     @NotNull
-    private String id;
+    private String memberId;
 
     @NotNull
     private String name;
@@ -30,13 +31,13 @@ public class Member extends AuditModel {
     private String password;
 
     @Builder
-    public Member(Integer seq) {
+    public Member(Long seq) {
         this.seq = seq;
     }
 
     @Builder
-    public Member(String id, String name, String password) {
-        this.id = id;
+    public Member(String memberId, String name, String password) {
+        this.memberId = memberId;
         this.name = name;
         this.password = password;
     }

@@ -4,6 +4,7 @@ import com.bgfnc.web.evaluation.config.security.CustomAccessDeniedHandler;
 import com.bgfnc.web.evaluation.config.security.CustomAuthenticationFailureHandler;
 import com.bgfnc.web.evaluation.config.security.CustomAuthenticationProvider;
 import com.bgfnc.web.evaluation.config.security.CustomAuthenticationSuccessHandler;
+import com.bgfnc.web.evaluation.service.MemberService;
 import com.bgfnc.web.evaluation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,12 +28,14 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final UserService userService;
 
     @Autowired
-    public SpringSecurityConfiguration(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler, CustomAuthenticationFailureHandler customAuthenticationFailureHandler, CustomAccessDeniedHandler customAccessDeniedHandler) {
+    public SpringSecurityConfiguration(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler, CustomAuthenticationFailureHandler customAuthenticationFailureHandler, CustomAccessDeniedHandler customAccessDeniedHandler, UserService userService) {
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
         this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
+        this.userService = userService;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        return new CustomAuthenticationProvider(new UserService());
+        return new CustomAuthenticationProvider(userService);
     }
 
     @Autowired

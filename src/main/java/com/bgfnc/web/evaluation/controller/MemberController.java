@@ -40,7 +40,7 @@ public class MemberController extends AbstractBaseController<MemberController> {
 
     // 회원 번호로 조회
     @GetMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> getMember(@PathVariable("memberSeq") Integer memberSeq) {
+    public ResponseEntity<Member> getMember(@PathVariable("memberSeq") Long memberSeq) {
         Optional<Member> member = memberService.findById(memberSeq);
 
         if (!member.isPresent()) {
@@ -52,7 +52,7 @@ public class MemberController extends AbstractBaseController<MemberController> {
 
     // 회원 번호로 삭제
     @DeleteMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> deleteMember(@PathVariable("memberSeq") Integer memberSeq) {
+    public ResponseEntity<Member> deleteMember(@PathVariable("memberSeq") Long memberSeq) {
         return new ResponseEntity<Member>(memberService.deleteById(memberSeq), HttpStatus.OK);
     }
 

@@ -24,11 +24,15 @@ public class MemberService {
         return new ArrayList<>(memberRepository.findAll());
     }
 
-    public Optional<Member> findById(Integer memberSeq) {
+    public Optional<Member> findById(Long memberSeq) {
         return memberRepository.findById(memberSeq);
     }
 
-    public Member deleteById(Integer memberSeq) {
+    public Optional<Member> findByMemberId(String memberId) {
+        return memberRepository.findByMemberId(memberId);
+    }
+
+    public Member deleteById(Long memberSeq) {
         return memberRepository.findById(memberSeq)
                 .map(member -> {
                     memberRepository.deleteById(memberSeq);
@@ -47,7 +51,7 @@ public class MemberService {
                 }).orElseThrow(() -> new ResourceNotFoundException("Member not found with id " + memberRequest.getSeq()));
     }
 
-    public Boolean existsById(Integer memberSeq) {
+    public Boolean existsById(Long memberSeq) {
         return memberRepository.existsById(memberSeq);
     }
 
