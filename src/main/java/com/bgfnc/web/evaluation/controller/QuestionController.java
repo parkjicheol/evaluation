@@ -64,27 +64,23 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
 
     // 질문 번호로 수정
     @PatchMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Question> updateQuestion(@PathVariable("questionSeq") Integer questionSeq, Question question) {
+    public ResponseEntity<Question> updateQuestion(@PathVariable("questionSeq") Integer questionSeq, Question questionRequest) {
 
         if (!questionService.existsById(questionSeq)) {
             throw new ResourceNotFoundException("Question not found with id " + questionSeq);
         }
 
-        return new ResponseEntity<Question>(questionService.updateById(questionSeq, question), HttpStatus.OK);
+        questionRequest.setMember(new Member(2));
+        questionRequest.setUpdateDate(Calendar.getInstance());
+        return new ResponseEntity<Question>(questionService.updateById(questionSeq, questionRequest), HttpStatus.OK);
     }
 
     // 질문 입력
     @PostMapping
-    public ResponseEntity<Question> save(Question question) {
-        question.setMember(new Member(2));
-        question.setRegisterDate(Calendar.getInstance());
-        return new ResponseEntity<Question>(questionService.save(question), HttpStatus.OK);
-    }
-
-    // 질문 입력
-    @GetMapping(value = "/saveQuestion", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Question> save(HttpServletRequest req, Question question) {
-        return new ResponseEntity<Question>(questionService.save(question), HttpStatus.OK);
+    public ResponseEntity<Question> saveQuestion(Question questionRequest) {
+        questionRequest.setMember(new Member(2));
+        questionRequest.setRegisterDate(Calendar.getInstance());
+        return new ResponseEntity<Question>(questionService.save(questionRequest), HttpStatus.OK);
     }
 
 }

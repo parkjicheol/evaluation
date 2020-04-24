@@ -69,21 +69,16 @@ public class AnswerController extends AbstractBaseController<AnswerController> {
         if (!answerService.existsById(answerSeq)) {
             throw new ResourceNotFoundException("Answer not found with id " + answerSeq);
         }
-
+        answerRequest.setMember(new Member(2));
+        answerRequest.setUpdateDate(Calendar.getInstance());
         return new ResponseEntity<Answer>(answerService.updateByAnswer(answerSeq, answerRequest), HttpStatus.OK);
     }
 
     // 질문 입력
     @PostMapping
-    public ResponseEntity<Answer> save(Integer questionSeq, Answer answerRequest) {
+    public ResponseEntity<Answer> saveAnswer(Integer questionSeq, Answer answerRequest) {
         answerRequest.setMember(new Member(2));
         answerRequest.setRegisterDate(Calendar.getInstance());
-        return new ResponseEntity<Answer>(answerService.save(questionSeq, answerRequest), HttpStatus.OK);
-    }
-
-    // 질문 입력
-    @GetMapping(value = "/saveAnswer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Answer> save(Integer questionSeq, HttpServletRequest request, Answer answerRequest) {
         return new ResponseEntity<Answer>(answerService.save(questionSeq, answerRequest), HttpStatus.OK);
     }
 

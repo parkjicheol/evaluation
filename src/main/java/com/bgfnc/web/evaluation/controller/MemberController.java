@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.List;
@@ -71,15 +70,16 @@ public class MemberController extends AbstractBaseController<MemberController> {
             throw new ResourceNotFoundException("Member not found with id " + memberSeq);
         }
 
+        member.setUpdateDate(Calendar.getInstance());
         memberService.updateById(memberSeq, member);
         return new ResponseEntity<Member>(member, HttpStatus.OK);
     }
 
     // 회원 입력
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> save(Member member) throws NoSuchAlgorithmException {
-        member.setRegisterDate(Calendar.getInstance());
+    public ResponseEntity<Member> saveMember(Member member) throws NoSuchAlgorithmException {
         member.setPassword(EncoderUtil.encodeSha256(member.getPassword()));
+        member.setRegisterDate(Calendar.getInstance());
         return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);
     }
 
