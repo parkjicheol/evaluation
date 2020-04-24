@@ -53,26 +53,16 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
 
     // 질문 번호로 삭제
     @DeleteMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteQuestion(@PathVariable("questionSeq") Integer questionSeq) {
-
-        if (!questionService.existsById(questionSeq)) {
-            throw new ResourceNotFoundException("Question not found with id " + questionSeq);
-        }
-
-        return questionService.deleteById(questionSeq);
+    public ResponseEntity<Question> deleteQuestion(@PathVariable("questionSeq") Integer questionSeq) {
+        return new ResponseEntity<Question>(questionService.deleteById(questionSeq), HttpStatus.OK);
     }
 
     // 질문 번호로 수정
-    @PatchMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Question> updateQuestion(@PathVariable("questionSeq") Integer questionSeq, Question questionRequest) {
-
-        if (!questionService.existsById(questionSeq)) {
-            throw new ResourceNotFoundException("Question not found with id " + questionSeq);
-        }
-
+    @PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Question> updateQuestion(Question questionRequest) {
         questionRequest.setMember(new Member(2));
         questionRequest.setUpdateDate(Calendar.getInstance());
-        return new ResponseEntity<Question>(questionService.updateById(questionSeq, questionRequest), HttpStatus.OK);
+        return new ResponseEntity<Question>(questionService.updateById(questionRequest), HttpStatus.OK);
     }
 
     // 질문 입력

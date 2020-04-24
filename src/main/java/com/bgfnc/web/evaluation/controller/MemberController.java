@@ -52,35 +52,23 @@ public class MemberController extends AbstractBaseController<MemberController> {
 
     // 회원 번호로 삭제
     @DeleteMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteMember(@PathVariable("memberSeq") Integer memberSeq) {
-
-        if (!memberService.existsById(memberSeq)) {
-            throw new ResourceNotFoundException("Member not found with id " + memberSeq);
-        }
-
-        memberService.deleteById(memberSeq);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Member> deleteMember(@PathVariable("memberSeq") Integer memberSeq) {
+        return new ResponseEntity<Member>(memberService.deleteById(memberSeq), HttpStatus.OK);
     }
 
     // 회원 번호로 수정
-    @PatchMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> updateMember(@PathVariable("memberSeq") Integer memberSeq, Member member) {
-
-        if (!memberService.existsById(memberSeq)) {
-            throw new ResourceNotFoundException("Member not found with id " + memberSeq);
-        }
-
-        member.setUpdateDate(Calendar.getInstance());
-        memberService.updateById(memberSeq, member);
-        return new ResponseEntity<Member>(member, HttpStatus.OK);
+    @PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Member> updateMember(Member memberRequest) throws NoSuchAlgorithmException {
+        memberRequest.setUpdateDate(Calendar.getInstance());
+        return new ResponseEntity<Member>(memberService.updateById(memberRequest), HttpStatus.OK);
     }
 
     // 회원 입력
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> saveMember(Member member) throws NoSuchAlgorithmException {
-        member.setPassword(EncoderUtil.encodeSha256(member.getPassword()));
-        member.setRegisterDate(Calendar.getInstance());
-        return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);
+    public ResponseEntity<Member> saveMember(Member memberRequest) throws NoSuchAlgorithmException {
+        memberRequest.setPassword(EncoderUtil.encodeSha256(memberRequest.getPassword()));
+        memberRequest.setRegisterDate(Calendar.getInstance());
+        return new ResponseEntity<Member>(memberService.save(memberRequest), HttpStatus.OK);
     }
 
 }

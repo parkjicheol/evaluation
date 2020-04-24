@@ -26,34 +26,31 @@ public class QuestionService {
         return new ArrayList<>(questionRepository.findAll());
     }
 
-    public Optional<Question> findById(Integer seq) {
-        return questionRepository.findById(seq);
+    public Optional<Question> findById(Integer questionSeq) {
+        return questionRepository.findById(questionSeq);
     }
 
-    public ResponseEntity<?> deleteById(Integer questionSeq) {
+    public Question deleteById(Integer questionSeq) {
         return questionRepository.findById(questionSeq)
                 .map(question -> {
                     questionRepository.delete(question);
-                    return ResponseEntity.ok().build();
+                    return question;
                 }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
     }
 
-    public Question save(Question question) {
-        questionRepository.save(question);
-        return question;
+    public Question save(Question questionSeq) {
+        return questionRepository.save(questionSeq);
     }
 
-    public Question updateById(Integer questionSeq, Question questionRequest) {
-        return questionRepository.findById(questionSeq)
+    public Question updateById(Question questionRequest) {
+        return questionRepository.findById(questionRequest.getSeq())
                 .map(question -> {
-                    question.setTitle(questionRequest.getTitle());
-                    question.setDescription(questionRequest.getDescription());
-                    return questionRepository.save(question);
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
+                    return questionRepository.save(questionRequest);
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionRequest.getSeq()));
     }
 
-    public Boolean existsById(Integer seq) {
-        return questionRepository.existsById(seq);
+    public Boolean existsById(Integer questionSeq) {
+        return questionRepository.existsById(questionSeq);
     }
 
 }

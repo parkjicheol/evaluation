@@ -4,6 +4,7 @@ import com.bgfnc.web.evaluation.common.abs.AbstractBaseController;
 import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
 import com.bgfnc.web.evaluation.model.Member;
 import com.bgfnc.web.evaluation.model.Answer;
+import com.bgfnc.web.evaluation.model.Question;
 import com.bgfnc.web.evaluation.service.AnswerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,25 +54,16 @@ public class AnswerController extends AbstractBaseController<AnswerController> {
 
     // 질문 번호로 삭제
     @DeleteMapping(value = "/{answerSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteAnswer(@PathVariable("answerSeq") Integer answerSeq) {
-
-        if (!answerService.existsById(answerSeq)) {
-            throw new ResourceNotFoundException("Answer not found with id " + answerSeq);
-        }
-
-        return answerService.deleteById(answerSeq);
+    public ResponseEntity<Answer> deleteAnswer(@PathVariable("answerSeq") Integer answerSeq) {
+        return new ResponseEntity<Answer>(answerService.deleteById(answerSeq), HttpStatus.OK);
     }
 
     // 질문 번호로 수정
     @PatchMapping
-    public ResponseEntity<Answer> updateAnswer(Integer answerSeq, Answer answerRequest) {
-
-        if (!answerService.existsById(answerSeq)) {
-            throw new ResourceNotFoundException("Answer not found with id " + answerSeq);
-        }
+    public ResponseEntity<Answer> updateAnswer(Answer answerRequest) {
         answerRequest.setMember(new Member(2));
         answerRequest.setUpdateDate(Calendar.getInstance());
-        return new ResponseEntity<Answer>(answerService.updateByAnswer(answerSeq, answerRequest), HttpStatus.OK);
+        return new ResponseEntity<Answer>(answerService.updateByAnswer(answerRequest), HttpStatus.OK);
     }
 
     // 질문 입력

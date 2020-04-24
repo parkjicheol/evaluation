@@ -1,5 +1,6 @@
 package com.bgfnc.web.evaluation.service;
 
+import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
 import com.bgfnc.web.evaluation.model.Member;
 import com.bgfnc.web.evaluation.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,34 +24,31 @@ public class MemberService {
         return new ArrayList<>(memberRepository.findAll());
     }
 
-    public Optional<Member> findById(Integer seq) {
-        return memberRepository.findById(seq);
+    public Optional<Member> findById(Integer memberSeq) {
+        return memberRepository.findById(memberSeq);
     }
 
-    public void deleteById(Integer seq) {
-        memberRepository.deleteById(seq);
+    public Member deleteById(Integer memberSeq) {
+        return memberRepository.findById(memberSeq)
+                .map(member -> {
+                    memberRepository.deleteById(memberSeq);
+                    return member;
+                }).orElseThrow(() -> new ResourceNotFoundException("Member not found with id " + memberSeq));
     }
 
-    public Member save(Member member) {
-        memberRepository.save(member);
-        return member;
+    public Member save(Member memberRequest) {
+        return memberRepository.save(memberRequest);
     }
 
-    public void updateById(Integer seq, Member member) {
-        Optional<Member> optionalMember = memberRepository.findById(seq);
-
-        if (optionalMember.isPresent()) {
-            optionalMember.get().setSeq(member.getSeq());
-            optionalMember.get().setId(member.getId());
-            optionalMember.get().setName(member.getName());
-            optionalMember.get().setRegisterDate(member.getRegisterDate());
-
-            memberRepository.save(member);
-        }
+    public Member updateById(Member memberRequest) {
+        return memberRepository.findById(memberRequest.getSeq())
+                .map(member -> {
+                    return memberRepository.save(memberRequest);
+                }).orElseThrow(() -> new ResourceNotFoundException("Member not found with id " + memberRequest.getSeq()));
     }
 
-    public Boolean existsById(Integer seq) {
-        return memberRepository.existsById(seq);
+    public Boolean existsById(Integer memberSeq) {
+        return memberRepository.existsById(memberSeq);
     }
 
 }

@@ -29,15 +29,15 @@ public class AnswerService {
         return new ArrayList<>(answerRepository.findAll());
     }
 
-    public Optional<Answer> findById(Integer seq) {
-        return answerRepository.findById(seq);
+    public Optional<Answer> findById(Integer answerSeq) {
+        return answerRepository.findById(answerSeq);
     }
 
-    public ResponseEntity<?> deleteById(Integer answerSeq) {
+    public Answer deleteById(Integer answerSeq) {
         return answerRepository.findById(answerSeq)
                 .map(answer -> {
                     answerRepository.delete(answer);
-                    return ResponseEntity.ok().build();
+                    return answer;
                 }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerSeq));
     }
 
@@ -49,16 +49,15 @@ public class AnswerService {
                 }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
     }
 
-    public Answer updateByAnswer(Integer answerSeq, Answer answerRequest) {
-        return answerRepository.findById(answerSeq)
+    public Answer updateByAnswer(Answer answerRequest) {
+        return answerRepository.findById(answerRequest.getSeq())
                 .map(answer -> {
-                    answer.setDescription(answerRequest.getDescription());
                     return answerRepository.save(answer);
-                }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerSeq));
+                }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerRequest.getSeq()));
     }
 
-    public Boolean existsById(Integer seq) {
-        return answerRepository.existsById(seq);
+    public Boolean existsById(Integer answerSeq) {
+        return answerRepository.existsById(answerSeq);
     }
     
 }
