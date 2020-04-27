@@ -33,11 +33,11 @@ public class AnswerService {
         return answerRepository.findById(answerSeq);
     }
 
-    public Answer deleteById(Integer answerSeq) {
+    public ResponseEntity<?> deleteById(Integer answerSeq) {
         return answerRepository.findById(answerSeq)
                 .map(answer -> {
                     answerRepository.delete(answer);
-                    return answer;
+                    return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerSeq));
     }
 

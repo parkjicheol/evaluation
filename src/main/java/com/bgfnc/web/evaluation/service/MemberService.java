@@ -4,6 +4,7 @@ import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
 import com.bgfnc.web.evaluation.model.Member;
 import com.bgfnc.web.evaluation.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,11 +33,11 @@ public class MemberService {
         return memberRepository.findByMemberId(memberId);
     }
 
-    public Member deleteById(Long memberSeq) {
+    public ResponseEntity<?> deleteById(Long memberSeq) {
         return memberRepository.findById(memberSeq)
                 .map(member -> {
                     memberRepository.deleteById(memberSeq);
-                    return member;
+                    return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Member not found with id " + memberSeq));
     }
 

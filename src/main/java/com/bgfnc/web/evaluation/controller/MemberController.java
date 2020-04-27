@@ -52,13 +52,15 @@ public class MemberController extends AbstractBaseController<MemberController> {
 
     // 회원 번호로 삭제
     @DeleteMapping(value = "/{memberSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> deleteMember(@PathVariable("memberSeq") Long memberSeq) {
-        return new ResponseEntity<Member>(memberService.deleteById(memberSeq), HttpStatus.OK);
+    public ResponseEntity<Void> deleteMember(@PathVariable("memberSeq") Long memberSeq) {
+        memberService.deleteById(memberSeq);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     // 회원 번호로 수정
     @PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Member> updateMember(Member memberRequest) throws NoSuchAlgorithmException {
+        memberRequest.setPassword(EncoderUtil.encodeSha256(memberRequest.getPassword()));
         memberRequest.setUpdateDate(Calendar.getInstance());
         return new ResponseEntity<Member>(memberService.updateById(memberRequest), HttpStatus.OK);
     }
