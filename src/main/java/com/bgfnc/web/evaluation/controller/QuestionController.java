@@ -53,8 +53,9 @@ public class QuestionController extends AbstractBaseController<QuestionControlle
 
     // 질문 번호로 삭제
     @DeleteMapping(value = "/{questionSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Question> deleteQuestion(@PathVariable("questionSeq") Integer questionSeq) {
-        return new ResponseEntity<Question>(questionService.deleteById(questionSeq), HttpStatus.OK);
+    public ResponseEntity<Void> deleteQuestion(@PathVariable("questionSeq") Integer questionSeq) {
+        questionService.deleteById(questionSeq);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     // 질문 번호로 수정

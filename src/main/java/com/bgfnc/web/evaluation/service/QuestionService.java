@@ -1,7 +1,6 @@
 package com.bgfnc.web.evaluation.service;
 
 import com.bgfnc.web.evaluation.exception.ResourceNotFoundException;
-import com.bgfnc.web.evaluation.model.Member;
 import com.bgfnc.web.evaluation.model.Question;
 import com.bgfnc.web.evaluation.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +29,11 @@ public class QuestionService {
         return questionRepository.findById(questionSeq);
     }
 
-    public Question deleteById(Integer questionSeq) {
+    public ResponseEntity<?> deleteById(Integer questionSeq) {
         return questionRepository.findById(questionSeq)
                 .map(question -> {
                     questionRepository.delete(question);
-                    return question;
+                    return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionSeq));
     }
 
